@@ -1,3 +1,4 @@
+# Deployment test - Azure Web App
 from fastapi import FastAPI, Request, UploadFile, HTTPException
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import JSONResponse
