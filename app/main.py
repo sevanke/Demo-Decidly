@@ -1,9 +1,10 @@
-# Deployment test - Azure Web App
 from fastapi import FastAPI, Request, UploadFile, HTTPException
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import JSONResponse
 from typing import Optional
-import anthropic, os, logging
+import anthropic
+import os
+import logging
 from datetime import datetime
 from dotenv import load_dotenv
 from fastapi.responses import HTMLResponse, JSONResponse
@@ -14,11 +15,30 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 load_dotenv()
 
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+try:
+    # Verify API key is set
+    api_key = os.getenv('ANTHROPIC_API_KEY')
+    if not api_key:
+        raise ValueError("ANTHROPIC_API_KEY environment variable is not set")
+
+    # Initialize Anthropic client
+    claude = anthropic.Anthropic(api_key=api_key)
+    logger.info("Anthropic client initialized successfully")
+except Exception as e:
+    logger.error(f"Failed to initialize Anthropic client: {e}")
+    raise
+
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
 # Initialize Claude
-claude = anthropic.Client(api_key=os.getenv('ANTHROPIC_API_KEY'))
+claude = anthropic.Anthropic(
+    api_key=os.getenv('ANTHROPIC_API_KEY')
+)
 
 SYSTEM_PROMPT = """You are Decidly, a specialized Canadian legal AI assistant. Structure your analysis as follows:
 
